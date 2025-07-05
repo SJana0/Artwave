@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /create-exhibition.html
+Disallow: /create-announcement.html
+Disallow: /requests-artists.html
+Disallow: /requests-exhibitions.html
+Disallow: /manage-exhibitionss.html
+Disallow: /manage-announcements.html
+Disallow: /edit-announcement.html
+Disallow: /edit-exhibition.html
+
+Allow: /
+

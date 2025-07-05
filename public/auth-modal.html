@@ -1,0 +1,33 @@
+<div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+  <div class="bg-white w-full max-w-xl rounded-lg shadow-lg p-8 relative animate-fade-in">
+    <button id="authModalClose" class="absolute top-2 right-3 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+    <div class="flex justify-center border-b pb-2 mb-4 gap-10">
+      <span id="authTabLogin" class="auth-tab text-lg active transition-all hover:text-black hover:border-black cursor-pointer">Вход</span>
+      <span id="authTabRegister" class="auth-tab text-lg transition-all hover:text-black hover:border-black cursor-pointer">Регистрация</span>
+    </div>
+    <div class="relative h-[300px] overflow-hidden">
+      <form id="modalLoginForm" class="auth-form-wrapper absolute top-1/2 left-0 -translate-y-1/2 w-full transition-all duration-300 opacity-100">
+        <input type="email" name="email" placeholder="Email" required class="auth-input">
+        <input type="password" name="password" placeholder="Пароль" required class="auth-input">
+        <button type="submit" class="auth-button">Войти</button>
+      </form>
+      <form id="modalRegisterForm" class="auth-form-wrapper absolute top-1/2 left-0 -translate-y-1/2 w-full opacity-0 pointer-events-none transition-all duration-300">
+        <input type="text" name="username" placeholder="Имя пользователя" required class="auth-input">
+        <input type="email" name="email" placeholder="Email" required class="auth-input">
+        <input type="password" name="password" placeholder="Пароль" required class="auth-input">
+        <button type="submit" class="auth-button bg-green-600 hover:bg-green-700">Зарегистрироваться</button>
+      </form>
+    </div>
+    <div id="modalMessage" class="text-center text-red-600 text-sm mt-3"></div>
+  </div>
+</div>
+
+<style>
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+</style>

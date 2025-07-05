@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Создать анонс</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mixitup/dist/mixitup.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex justify-between items-center h-16">
+        <!-- Название страницы слева -->
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Создание анонса</h1>
+
+        <!-- Навигация справа (десктоп) -->
+        <nav class="hidden lg:flex items-center space-x-6 text-base font-medium navigation">
+          <a href="/admin.html" class="hover:text-[#20977d]">Назад</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d]">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Назад</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d]">Выйти</a>
+    </div>
+  </header>
+  <hr />
+
+  <main class="pt-28 px-6 justify-center">
+    <form id="announcementForm">
+      <label>Заголовок:</label>
+      <input type="text" name="title" required>
+
+      <label>Описание:</label>
+      <textarea name="description" required></textarea>
+
+      <label>Тема (необязательно):</label>
+      <input type="text" name="theme">
+
+      <label>Обложка:</label>
+      <input type="file" name="cover" accept="image/*" required>
+
+      <br><br>
+      <button type="submit">Создать анонс</button>
+    </form>
+
+    <div id="message" style="margin-top:20px;"></div>
+  </main>
+
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      location.href = '/';
+    });
+
+    document.getElementById('announcementForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      if (!token) return Swal.fire('Ошибка', 'Вы не авторизованы', 'error');
+
+      const formData = new FormData(e.target);
+
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File && value.size > 5 * 1024 * 1024) {
+          Swal.fire('Ошибка', `Файл "${value.name}" слишком большой. Максимум 5 МБ.`, 'error');
+          return;
+        }
+      }
+
+      const res = await fetch('/api/create-announcement', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
+      });
+
+      const msg = await res.text();
+      document.getElementById('message').innerText = msg;
+      if (res.ok) {
+        e.target.reset();
+        Swal.fire('Готово', 'Анонс успешно создан', 'success');
+      } else {
+        Swal.fire('Ошибка', msg, 'error');
+      }
+    });
+  </script>
+
+  <script src="/js/nav.js"></script>
+  <script type="module" src="/js/index.js"></script>
+</body>
+</html>

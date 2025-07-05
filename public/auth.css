@@ -1,0 +1,104 @@
+.auth-container {
+  max-width: 440px;
+  margin: 80px auto;
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+}
+
+.auth-container:hover {
+  transform: translateY(-2px);
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  color: #222;
+}
+
+.auth-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+}
+
+.auth-tab {
+  cursor: pointer;
+  padding: 10px 20px;
+  margin: 0 5px;
+  font-weight: 600;
+  color: #777;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.auth-tab.active {
+  color: #111;
+  border-color: #333;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.auth-container input {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.2s;
+}
+
+.auth-container input:focus {
+  border-color: #333;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.1);
+}
+
+.auth-container button {
+  padding: 12px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.auth-container button:hover {
+  background-color: #555;
+  transform: scale(1.02);
+}
+
+#message {
+  text-align: center;
+  margin-top: 12px;
+  color: #a00;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

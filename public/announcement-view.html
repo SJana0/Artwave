@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ArtWave — виртуальная выставка работ начинающих художников. Просматривайте тематические и персональные экспозиции, знакомьтесь с авторами, ставьте лайки и комментируйте.">
+  <meta name="keywords" content="виртуальная выставка, искусство, начинающие художники, онлайн-галерея, ArtWave">
+  <meta name="author" content="ArtWave">
+  <title>Анонсы ArtWave</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-gradient-to-b from-white to-gray-100 min-h-screen">
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex items-center justify-between h-16">
+        <!-- Логотип слева -->
+        <a href="/" class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">ArtWave</a>
+
+
+        <!-- Десктопное меню справа -->
+        <nav class="hidden lg:flex items-center space-x-6 navigation">
+          <a href="/" class="hover:text-[#20977d]">Главная</a>
+          <a href="/exhibitions.html" class="hover:text-[#20977d]">Выставки</a>
+          <a href="/artists.html" class="hover:text-[#20977d]">Художники</a>
+          <a href="#" id="profileBtn" class="hover:text-[#20977d]">Профиль</a>
+          <a href="#" id="loginBtn" class="hover:text-[#20977d]">Вход</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d] hidden">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Главная</a>
+      <a href="/exhibitions.html" class="block hover:text-[#20977d]">Выставки</a>
+      <a href="/artists.html" class="block hover:text-[#20977d]">Художники</a>
+      <a href="#" id="profileBtnMobile" class="block hover:text-[#20977d]">Профиль</a>
+      <a href="#" id="loginBtnMobile" class="block hover:text-[#20977d]">Вход</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d] hidden">Выйти</a>
+    </div>
+  </header>
+
+<main class="pt-28 px-6">
+  <div id="announcementContainer" class="mb-10 max-w-4xl mx-auto text-center">
+    <h2 id="announcementTitle" class="text-5xl font-extrabold text-gray-900 mb-6">Загрузка...</h2>
+    <p id="announcementTheme" class="text-base italic mb-2" style="color: #20977d;"></p>
+    <p id="announcementDate" class="text-sm text-gray-500 mb-6"></p>
+    <img id="announcementCover" class="mx-auto mb-6 rounded-lg max-h-[400px] object-cover shadow-md" />
+    <div id="announcementDescription" class="text-lg text-gray-800 leading-relaxed text-justify"></div>
+  </div>
+</main>
+
+
+
+<footer class="text-center py-10 bg-white border-t text-gray-600 mt-16">
+  <h3 class="text-lg font-semibold mb-2">Контакты</h3>
+  <p class="mb-1">+7 964 422 69 29</p>
+  <p class="mb-4">Pochta@mail.ru</p>
+  <div class="contact-icons">
+    <a href="#"><img src="/icons/mail.svg" alt="Почта" /></a>
+    <a href="#"><img src="/icons/phone.svg" alt="Телефон" /></a>
+  </div>
+</footer>
+
+<script>
+  const id = new URLSearchParams(location.search).get('id');
+
+  async function loadAnnouncement() {
+    try {
+      const res = await fetch(`/api/exhibition/${id}`);
+      const { exhibition } = await res.json();
+
+      if (!exhibition || !exhibition.IsAnnouncement) {
+        document.getElementById('announcementContainer').innerHTML = '<p class="text-red-500">Анонс не найден</p>';
+        return;
+      }
+
+      document.getElementById('announcementTitle').textContent = exhibition.Title;
+      document.getElementById('announcementCover').src = exhibition.CoverImagePath;
+      document.getElementById('announcementTheme').textContent = exhibition.Theme ? `Тема: ${exhibition.Theme}` : '';
+      document.getElementById('announcementDate').textContent = dayjs(exhibition.PostDate).format('DD MMMM YYYY');
+      document.getElementById('announcementDescription').textContent = exhibition.Description;
+
+    } catch (err) {
+      console.error(err);
+      document.getElementById('announcementContainer').innerHTML = '<p class="text-red-500">Ошибка загрузки</p>';
+    }
+  }
+
+  loadAnnouncement();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/auth-modal.js"></script>
+<div id="authModalContainer"></div>
+</body>
+</html>

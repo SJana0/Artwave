@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактировать выставку</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex justify-between items-center h-16">
+        <!-- Название страницы слева -->
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Редактирование выставки</h1>
+
+        <!-- Навигация справа (десктоп) -->
+        <nav class="hidden lg:flex items-center space-x-6 text-base font-medium navigation">
+          <a href="/" class="hover:text-[#20977d]">Назад</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d]">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Назад</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d]">Выйти</a>
+    </div>
+  </header>
+<main class="pt-28 px-6">
+  <form id="editExhibitionForm">
+    <label>Название:</label>
+    <input type="text" name="title" required>
+
+    <label>Описание:</label>
+    <textarea name="description" required></textarea>
+
+    <label>Тема:</label>
+    <input type="text" name="theme">
+
+    <label>Тип:</label>
+    <select name="type" required>
+      <option value="personal">Персональная</option>
+      <option value="theme">Тематическая</option>
+    </select>
+
+    <label>Обновить обложку (необязательно):</label>
+    <input type="file" name="cover" accept="image/*">
+
+    <br>
+    <button type="submit">Сохранить изменения</button>
+  </form>
+  <div id="message"></div>
+</main>
+<script>
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const token = localStorage.getItem('token');
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    location.href = '/';
+  });
+
+  async function loadData() {
+    try {
+      const res = await fetch(`/api/exhibition/${id}`);
+      const data = await res.json();
+      const form = document.getElementById('editExhibitionForm');
+
+      form.title.value = data.exhibition.Title;
+      form.description.value = data.exhibition.Description;
+      form.theme.value = data.exhibition.Theme;
+      form.type.value = data.exhibition.Type;
+    } catch (err) {
+      document.getElementById('message').innerText = 'Ошибка загрузки данных';
+    }
+  }
+
+  document.getElementById('editExhibitionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File && value.size > 5 * 1024 * 1024) {
+        Swal.fire('Ошибка', `Файл "${value.name}" слишком большой. Максимум 5 МБ.`, 'error');
+        return;
+      }
+    }
+
+    try {
+      const res = await fetch(`/api/edit-exhibition/${id}`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
+      });
+
+      const text = await res.text();
+      document.getElementById('message').innerText = text;
+      if (res.ok) Swal.fire('Успешно', text, 'success');
+      else Swal.fire('Ошибка', text, 'error');
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Ошибка', 'Не удалось сохранить изменения', 'error');
+    }
+  });
+
+  loadData();
+</script>
+<script src="/js/nav.js"></script>
+<script type="module" src="/js/index.js"></script>
+</body>
+</html>

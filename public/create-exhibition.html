@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Создание выставки</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .work-block {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex justify-between items-center h-16">
+        <!-- Название страницы слева -->
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Создание выставки</h1>
+
+        <!-- Навигация справа (десктоп) -->
+        <nav class="hidden lg:flex items-center space-x-6 text-base font-medium navigation">
+          <a href="/admin.html"  class="hover:text-[#20977d]">Назад</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d]">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Назад</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d]">Выйти</a>
+    </div>
+  </header>
+  <hr />
+
+  <main class="pt-28 px-6 justify-center">
+    <form id="exhibitionForm">
+      <label>Название:</label>
+      <input type="text" name="title" required>
+
+      <label>Описание:</label>
+      <textarea name="description" required></textarea>
+
+      <label>Тема:</label>
+      <input type="text" name="theme">
+
+      <label>Тип:</label>
+      <select name="type" required>
+        <option value="personal">Персональная</option>
+        <option value="theme">Тематическая</option>
+      </select>
+
+      <label>Обложка выставки:</label>
+      <input type="file" name="cover" accept="image/*" required>
+
+      <h2>Работы</h2>
+      <div id="worksContainer"></div>
+      <button type="button" onclick="addWorkBlock()">Добавить работу</button>
+
+      <br><br>
+      <button type="submit">Создать выставку</button>
+    </form>
+
+    <div id="message"></div>
+  </main>
+
+  <script>
+  // Определяем ключ черновика в localStorage
+  const draftKey = window.location.pathname.includes('create-exhibition')
+    ? 'createExhibitionAdminDraft'
+    : 'requestExhibitionUserDraft';
+
+  let workCount = 0;
+  let tagOptions = [];
+  let artistOptions = [];
+
+  // Получение тегов и художников (если это create-exhibition)
+  async function fetchOptions() {
+    const tagsRes = await fetch('/api/tags');
+    tagOptions = await tagsRes.json();
+
+    if (window.location.pathname.includes('create-exhibition')) {
+      const artistRes = await fetch('/api/artist-options');
+      artistOptions = await artistRes.json();
+    }
+  }
+
+  // Добавление блока работы с предзаполнением (если есть черновик)
+  function addWorkBlock(prefilled = {}) {
+    const container = document.getElementById('worksContainer');
+    const div = document.createElement('div');
+    div.className = 'work-block';
+    const selectID = `tagsSelect_${workCount}`;
+
+    const tagHTML = tagOptions.map(t => 
+      `<option value="${t.TagID}" ${prefilled.tags?.includes(t.TagID) ? 'selected' : ''}>${t.TagName}</option>`
+    ).join('');
+
+    const artistHTML = artistOptions.length > 0
+      ? `<label>Художник:</label>
+        <select name="artistID_${workCount}" required>
+          ${artistOptions.map(a => 
+            `<option value="${a.ArtistID}" ${prefilled.artist == a.ArtistID ? 'selected' : ''}>${a.Username}</option>`
+          ).join('')}
+        </select>`
+      : '';
+
+    div.innerHTML = `
+      <h3>Работа ${workCount + 1}</h3>
+      <label>Название:</label>
+      <input type="text" name="workTitle_${workCount}" value="${prefilled.title || ''}" required>
+
+      <label>Описание:</label>
+      <textarea name="workDescription_${workCount}" required>${prefilled.description || ''}</textarea>
+
+      ${artistHTML}
+
+      <label>Теги:</label>
+      <select id="${selectID}" name="tags_${workCount}[]" multiple>
+        ${tagHTML}
+      </select>
+
+      <label>Изображение:</label>
+      <input type="file" name="image_${workCount}" accept="image/*" required>
+    `;
+
+    container.appendChild(div);
+
+    new Choices(`#${selectID}`, {
+      removeItemButton: true,
+      placeholderValue: 'Выберите теги',
+      searchPlaceholderValue: 'Поиск...'
+    });
+
+    workCount++;
+  }
+
+  // Сохраняем черновик в localStorage
+  function saveDraft() {
+    const draft = {
+      title: document.querySelector('input[name="title"]')?.value,
+      description: document.querySelector('textarea[name="description"]')?.value,
+      theme: document.querySelector('input[name="theme"]')?.value,
+      type: document.querySelector('select[name="type"]')?.value,
+      works: []
+    };
+
+    for (let i = 0; i < workCount; i++) {
+      const title = document.querySelector(`input[name="workTitle_${i}"]`)?.value;
+      const description = document.querySelector(`textarea[name="workDescription_${i}"]`)?.value;
+      const tags = Array.from(document.querySelectorAll(`#tagsSelect_${i} option:checked`)).map(opt => parseInt(opt.value));
+      const artist = document.querySelector(`select[name="artistID_${i}"]`)?.value;
+      draft.works.push({ title, description, tags, artist });
+    }
+
+    localStorage.setItem(draftKey, JSON.stringify(draft));
+  }
+
+  // Загружаем черновик из localStorage
+  function loadDraft() {
+    const data = JSON.parse(localStorage.getItem(draftKey));
+    if (!data) return;
+
+    if (data.title) document.querySelector('input[name="title"]').value = data.title;
+    if (data.description) document.querySelector('textarea[name="description"]').value = data.description;
+
+    const themeInput = document.querySelector('input[name="theme"]');
+    if (data.theme && themeInput) themeInput.value = data.theme;
+
+    const typeSelect = document.querySelector('select[name="type"]');
+    if (data.type && typeSelect) typeSelect.value = data.type;
+
+    if (data.works?.length) {
+      data.works.forEach(w => addWorkBlock(w));
+    } else {
+      addWorkBlock();
+    }
+  }
+
+
+  //Очистка черновика и формы
+  function clearDraft() {
+    localStorage.removeItem(draftKey);
+    location.reload();
+  }
+
+  //При загрузке страницы
+  window.addEventListener('load', async () => {
+    await fetchOptions();
+    loadDraft();
+  });
+
+  //Автосохранение на любые изменения
+  document.addEventListener('input', saveDraft);
+
+  //Очистка черновика при отправке формы
+document.getElementById('exhibitionForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  localStorage.removeItem(draftKey); // очищаем черновик
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    Swal.fire('Ошибка', 'Вы не авторизованы', 'error');
+    return;
+  }
+
+  const formData = new FormData(this);
+  formData.append('workCount', workCount);
+
+  //Проверка размера файлов
+  for (const [key, value] of formData.entries()) {
+    if (value instanceof File && value.size > 5 * 1024 * 1024) {
+      Swal.fire('Ошибка', `Файл "${value.name}" слишком большой. Максимум 5 МБ.`, 'error');
+      return;
+    }
+  }
+
+  const res = await fetch('/api/create-exhibition', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
+    body: formData
+  });
+
+  const msg = await res.text();
+  if (res.ok) {
+    Swal.fire('Успешно', msg, 'success');
+    this.reset();
+    document.getElementById('worksContainer').innerHTML = '';
+    workCount = 0;
+    addWorkBlock();
+  } else {
+    Swal.fire('Ошибка', msg, 'error');
+  }
+});
+
+
+  // Кнопка "Очистить все поля"
+  const clearBtn = document.createElement('button');
+  clearBtn.innerText = 'Очистить все поля';
+  clearBtn.type = 'button';
+  clearBtn.className = 'mt-4 ml-3 text-sm text-red-600 underline';
+  clearBtn.onclick = clearDraft;
+  document.getElementById('exhibitionForm').appendChild(clearBtn);
+</script>
+<script src="/js/nav.js"></script>
+<script type="module" src="/js/index.js"></script>
+</body>
+</html>

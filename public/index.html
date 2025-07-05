@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ArtWave — виртуальная выставка работ начинающих художников. 
+  Просматривайте тематические и персональные экспозиции, 
+  знакомьтесь с авторами, ставьте лайки и комментируйте.">
+  <meta name="keywords" content="виртуальная выставка, искусство, начинающие художники, 
+  онлайн-галерея, ArtWave">
+  <meta name="author" content="ArtWave">
+
+  <title>ArtWave — Виртуальная выставка начинающих художников</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mixitup/dist/mixitup.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+  </style>
+</head>
+<body class="bg-gradient-to-b from-white to-gray-100 min-h-screen">
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">ArtWave</a>
+
+
+        <!-- Десктопное меню справа -->
+        <nav class="hidden lg:flex items-center space-x-6 navigation">
+          <a href="/" class="hover:text-[#20977d]">Главная</a>
+          <a href="/exhibitions.html" class="hover:text-[#20977d]">Выставки</a>
+          <a href="/artists.html" class="hover:text-[#20977d]">Художники</a>
+          <a href="#" id="profileBtn" class="hover:text-[#20977d]">Профиль</a>
+          <a href="#" id="loginBtn" class="hover:text-[#20977d]">Вход</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d] hidden">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Главная</a>
+      <a href="/exhibitions.html" class="block hover:text-[#20977d]">Выставки</a>
+      <a href="/artists.html" class="block hover:text-[#20977d]">Художники</a>
+      <a href="#" id="profileBtnMobile" class="block hover:text-[#20977d]">Профиль</a>
+      <a href="#" id="loginBtnMobile" class="block hover:text-[#20977d]">Вход</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d] hidden">Выйти</a>
+    </div>
+  </header>
+
+
+  <main class="pt-28 px-6">
+    <!-- Приветственный блок -->
+    <section class="welcome-section bg-white py-12 px-6 rounded-xl shadow-md mb-20 flex flex-col lg:flex-row gap-10 items-center">
+      <div class="welcome-image lg:w-1/2 w-full">
+        <img src="/images/im3.jpg" alt="Example Art" class="rounded-xl w-full object-cover shadow-sm">
+      </div>
+      <div class="welcome-text lg:w-1/2 w-full text-lg leading-relaxed">
+        <h2 class="text-3xl font-semibold text-gray-900 mb-4">Вдохновляй. Делись. Твори.</h2>
+        <p class="mb-3">Art Wave — это онлайн-пространство, где начинающие художники могут делиться своими работами, участвовать в выставках и находить единомышленников.</p>
+        <p class="mb-3">Наша цель — поддерживать новые таланты и делать искусство доступным для всех. Присоединяйтесь и покажите миру, на что вы способны!</p>
+      </div>
+    </section>
+
+    <!-- Призыв к регистрации -->
+    <section class="cta-section py-16 px-6 rounded-xl shadow-md text-center mb-20 text-black">
+      <h2 class="text-4xl font-bold mb-6">Хочешь участвовать в выставках?</h2>
+      <p class="text-lg mb-6">Создай профиль художника, загружай свои работы и присоединяйся к тематическим или персональным выставкам.</p>
+      <a href="/apply-artist.html" class="inline-block text-white px-6 py-3 rounded-xl text-lg hover:bg-opacity-80 transition">Стать художником</a>
+    </section>
+
+    <!-- Новый блок: о платформе с изображением справа -->
+    <section class="info-section bg-white py-16 px-6 rounded-xl shadow-md mb-20 flex flex-col lg:flex-row gap-10 items-center">
+      <div class="info-text lg:w-1/2 w-full text-lg leading-relaxed text-center lg:text-left">
+        <h2 class="text-4xl font-bold text-gray-900 mb-6">О платформе Art Wave</h2>
+        <p class="text-gray-700">Art Wave — это виртуальная выставка начинающих художников, объединяющая возможности онлайн-галереи, социальной платформы и системы обратной связи. Мы создаём пространство, где каждый может проявить себя, независимо от образования, возраста или опыта.</p>
+      </div>
+      <div class="info-image lg:w-1/2 w-full">
+        <img src="/images/portrait9.png" alt="О платформе Art Wave">
+      </div>
+    </section>
+
+    <!-- Анонсы -->
+    <section class="announcements mb-24">
+      <h2 class="text-center text-3xl font-semibold text-gray-900 mb-10">Анонсы</h2>
+      <div class="announcement-scroll" id="announcementContainer">
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center py-10 bg-white border-t text-gray-600">
+    <h3 class="text-lg font-semibold mb-2">Контакты</h3>
+    <p class="mb-1">+7 964 422 69 29</p>
+    <p class="mb-4">Pochta@mail.ru</p>
+    <div class="contact-icons">
+      <a href="#"><img src="/icons/mail.svg" alt="Почта" /></a>
+      <a href="#"><img src="/icons/phone.svg" alt="Телефон" /></a>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/index.js"></script>
+  <script src="/js/auth-modal.js"></script>
+  <script src="/js/nav.js"></script>
+
+  <div id="authModalContainer"></div>
+</body>
+</html>

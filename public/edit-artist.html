@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ArtWave — виртуальная выставка работ начинающих художников. Просматривайте тематические и персональные экспозиции, знакомьтесь с авторами, ставьте лайки и комментируйте.">
+  <meta name="keywords" content="виртуальная выставка, искусство, начинающие художники, онлайн-галерея, ArtWave">
+  <meta name="author" content="ArtWave">
+  <title>Редактирование профиля Art Wave</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex justify-between items-center h-16">
+        <!-- Название страницы слева -->
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Редактирование профился художника</h1>
+
+        <!-- Навигация справа (десктоп) -->
+        <nav class="hidden lg:flex items-center space-x-6 text-base font-medium navigation">
+          <a href="/" class="hover:text-[#20977d]">Назад</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d]">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Назад</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d]">Выйти</a>
+    </div>
+  </header>
+  <hr />
+
+  <main class="pt-28 px-6 justify-center">
+    <form id="editForm">
+      <label>О себе:</label>
+      <textarea name="bio" required></textarea>
+
+      <label>Ссылки на соцсети:</label>
+      <input type="text" name="socialLinks">
+
+      <label>Новый аватар (необязательно):</label>
+      <input type="file" name="avatar" accept="image/*">
+
+      <br><br>
+      <button type="submit">Сохранить изменения</button>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      location.href = '/';
+    });
+
+    async function loadInfo() {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/profile-full', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      const user = await res.json();
+      if (!user.isArtist) {
+        Swal.fire('Ошибка', 'Вы не художник', 'error');
+        return;
+      }
+
+      const artistRes = await fetch(`/api/artist/${user.artistID}`);
+      const data = await artistRes.json();
+
+      const form = document.forms['editForm'];
+      form.bio.value = data.artist.Bio || '';
+      form.socialLinks.value = data.artist.SocialLinks || '';
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      const formData = new FormData(this);
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File && value.size > 5 * 1024 * 1024) {
+          Swal.fire('Ошибка', `Файл "${value.name}" слишком большой. Максимум 5 МБ.`, 'error');
+          return;
+        }
+      }
+
+      const response = await fetch('/api/edit-artist', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
+      });
+
+      const msg = await response.text();
+      if (response.ok) {
+        Swal.fire('Успешно', msg, 'success');
+        this.reset();
+      } else {
+        Swal.fire('Ошибка', msg, 'error');
+      }
+    });
+
+    loadInfo();
+  </script>
+  <script src="/js/nav.js"></script>
+</body>
+</html>

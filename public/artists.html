@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ArtWave — виртуальная выставка работ начинающих художников. Просматривайте тематические и персональные экспозиции, знакомьтесь с авторами, ставьте лайки и комментируйте.">
+  <meta name="keywords" content="виртуальная выставка, искусство, начинающие художники, онлайн-галерея, ArtWave">
+  <meta name="author" content="ArtWave">
+  <title>Художники Art Wave</title>
+
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gradient-to-b from-white to-gray-100 min-h-screen">
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex items-center justify-between h-16">
+        <!-- Логотип слева -->
+        <a href="/" class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">ArtWave</a>
+
+
+        <!-- Десктопное меню справа -->
+        <nav class="hidden lg:flex items-center space-x-6 navigation">
+          <a href="/" class="hover:text-[#20977d]">Главная</a>
+          <a href="/exhibitions.html" class="hover:text-[#20977d]">Выставки</a>
+          <a href="/artists.html" class="hover:text-[#20977d]">Художники</a>
+          <a href="#" id="profileBtn" class="hover:text-[#20977d]">Профиль</a>
+          <a href="#" id="loginBtn" class="hover:text-[#20977d]">Вход</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d] hidden">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Главная</a>
+      <a href="/exhibitions.html" class="block hover:text-[#20977d]">Выставки</a>
+      <a href="/artists.html" class="block hover:text-[#20977d]">Художники</a>
+      <a href="#" id="profileBtnMobile" class="block hover:text-[#20977d]">Профиль</a>
+      <a href="#" id="loginBtnMobile" class="block hover:text-[#20977d]">Вход</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d] hidden">Выйти</a>
+    </div>
+  </header>
+
+  <main class="pt-28 px-6">
+    <section class="exhibitions">
+      <h2 class="text-center text-3xl font-semibold text-gray-900 mb-10">Художники</h2>
+      <div id="artistsContainer" class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"></div>
+    </section>
+  </main>
+
+  <footer class="text-center py-10 bg-white border-t text-gray-600 mt-16">
+    <h3 class="text-lg font-semibold mb-2">Контакты</h3>
+    <p class="mb-1">+7 964 422 69 29</p>
+    <p class="mb-4">Pochta@mail.ru</p>
+    <div class="contact-icons">
+      <a href="#"><img src="/icons/mail.svg" alt="Почта" /></a>
+      <a href="#"><img src="/icons/phone.svg" alt="Телефон" /></a>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/artists-script.js"></script>
+
+  <script src="/js/auth-modal.js"></script>
+  <script src="/js/nav.js"></script>
+  <div id="authModalContainer"></div>
+</body>
+</html>

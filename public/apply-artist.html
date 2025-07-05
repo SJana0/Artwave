@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Подайте заявку, чтобы стать участником 
+  виртуальной выставки начинающих художников ArtWave. 
+  Загрузите аватар, биографию и примеры работ.">
+  <meta name="keywords" content="виртуальная выставка, искусство, начинающие художники, 
+  онлайн-галерея, ArtWave">
+  <meta name="author" content="ArtWave">
+  <title>Стать художником</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mixitup/dist/mixitup.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="mx-auto px-6 sm:px-8 lg:px-10">
+      <div class="flex justify-between items-center h-16">
+        <!-- Название страницы слева -->
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Заявка на создание профиля</h1>
+
+        <!-- Навигация справа (десктоп) -->
+        <nav class="hidden lg:flex items-center space-x-6 text-base font-medium navigation">
+          <a href="/" class="hover:text-[#20977d]">Назад</a>
+          <a href="#" id="logoutBtn" class="hover:text-[#20977d]">Выйти</a>
+        </nav>
+
+        <!-- Кнопка для мобильных -->
+        <div class="lg:hidden">
+          <button id="mobileMenuBtn" class="p-2 rounded-md text-gray-500 hover:text-black focus:outline-none">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobileMenu" class="lg:hidden hidden px-6 pt-2 pb-4 space-y-1 text-gray-700 text-base font-medium navigation">
+      <a href="/" class="block hover:text-[#20977d]">Назад</a>
+      <a href="#" id="logoutBtnMobile" class="block hover:text-[#20977d]">Выйти</a>
+    </div>
+  </header>
+
+  <hr />
+
+  <main class="pt-28 px-6 justify-center">
+    <form id="artistForm">
+      <label>О себе (Bio):</label>
+      <textarea name="bio" required></textarea>
+
+      <label>Ссылки на соцсети:</label>
+      <input type="text" name="socialLinks" required>
+
+      <label>Аватар:</label>
+      <input type="file" name="avatar" accept="image/*" required>
+      
+      <label>Примеры работ (до 5):</label>
+      <input type="file" name="samples" accept="image/*" multiple required>
+
+
+      <br><br>
+      <button type="submit">Отправить заявку</button>
+    </form>
+    <div id="message"></div>
+  </main>
+
+  <script>
+    document.getElementById('artistForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const token = localStorage.getItem('token');
+      // 🔒 Проверка размера изображений (до 10MB)
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File && value.size > 5 * 1024 * 1024) {
+          Swal.fire('Ошибка', `Файл "${value.name}" слишком большой. Максимум 5 МБ.`, 'error');
+          return;
+        }
+      }
+
+      if (!token) return alert('Вы не вошли');
+
+      const response = await fetch('/api/apply-artist', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
+      });
+
+      const result = await response.text();
+      document.getElementById('message').innerText = result;
+    });
+  </script>
+  <script src="/js/nav.js"></script>
+  <script type="module" src="/js/index.js"></script>
+</body>
+</html>
