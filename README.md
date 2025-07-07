@@ -50,7 +50,9 @@ CREATE DATABASE artwave;
 
 3. **Импортируйте дамп базы данных**
 
+```bash
 mysql -u <ваш_пользователь> -p artwave < path/to/database.sql
+```
 
 5. **Настройте параметры подключения к базе данных**
    
