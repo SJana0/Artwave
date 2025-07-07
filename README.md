@@ -43,6 +43,7 @@ cd artwave
 
 2. **Настройте базу данных**
 Создайте новую базу данных в MySQL:
+
 ```sql
 CREATE DATABASE artwave;
 ```
