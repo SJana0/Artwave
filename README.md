@@ -52,7 +52,7 @@ CREATE DATABASE artwave;
 
 3. **Импортируйте дамп базы данных**
 
-Запустите DumpArtwave.sql, в первой строке прописав Use artwave; в MySQL или с помощью команды:
+Запустите DumpArtwave.sql в MySQL, в первой строке прописав Use artwave; или с помощью команды:
 
 ```bash
 mysql -u <ваш_пользователь> -p artwave < path/to/DumpArtwave.sql
