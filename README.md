@@ -16,7 +16,50 @@
   - Эксперты: модерация заявок
 
 - **Технологический стек**:
-  ```bash
-  Frontend: HTML5, TailwindCSS, JavaScript (Choices.js, SweetAlert2, Day.js)
-  Backend: Node.js + Express.js (REST API, JWT, Multer, bcrypt)
-  Database: MySQL
+  - Frontend: HTML5, TailwindCSS, JavaScript (Choices.js, SweetAlert2, Day.js)
+  - Backend: Node.js + Express.js (REST API, JWT, Multer, bcrypt)
+  - Database: MySQL
+
+## Документация и файлы проекта
+
+Для краткого описания проекта смотрите файл: Степанова.pdf
+Для презентации: Степанова_ВКРБ_Презентация_4.0.pptx
+
+## Установка и запуск проекта
+
+### Требования
+
+- [Node.js](https://nodejs.org/) версии 18.x или выше
+- [MySQL](https://www.mysql.com/) версии 8.0 или выше
+
+### Шаги по установке
+
+1. **Клонируйте репозиторий**
+
+```bash
+git clone https://github.com/ваш_репозиторий/artwave.git
+cd artwave
+```
+
+2. **Настройте базу данных**
+Создайте новую базу данных в MySQL:
+```sql
+CREATE DATABASE artwave;
+```
+
+3. **Импортируйте дамп базы данных**
+mysql -u <ваш_пользователь> -p artwave < path/to/database.sql
+
+4. **Настройте параметры подключения к базе данных**
+В файле .env укажите параметры подключения
+
+5. **Установите зависимости**
+6. **Запустите сервер в терминале редактора кода**
+
+```
+node index.js
+```
+
+Откройте браузер и перейдите по адресу:
+http://localhost:3000
+
